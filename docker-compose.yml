@@ -1,0 +1,29 @@
+version: "3"
+services:
+  consul:
+    image: consul
+    ports:
+      - 8500:8500
+      - 8600:8600/udp
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+  account-service:
+    build: ./account/account-service
+    depends_on:
+      - consul
+    ports:
+      - 8083:8083
+  balance-service:
+    build: ./balance/balance-service
+    depends_on:
+      - consul
+    ports:
+      - 8082:8082
+  transfer-service:
+    build: ./transfer/transfer-service
+    depends_on:
+      - consul
+      - account-service
+      - balance-service
+    ports:
+      - 8085:8085
